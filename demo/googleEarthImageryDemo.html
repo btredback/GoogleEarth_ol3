@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="js/ol.css">
+    <meta charset="UTF-8">
+    <title>Google Earth Imagery</title>
+    <link rel="stylesheet" href="css/search.css"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+</head>
+<body>
+    <div class="search">
+        <label for="lon_x">X</label><input id="lon_x" type="text">
+        <label for="lat_y">Y</label><input id="lat_y" type="text">
+        <button class="btn btn-default" id="search_btn">搜索</button>
+    </div>
+    <div id="map" class="map"></div>
+    <div id="mousePosition">
+        <span id="mouse-position"></span>
+    </div>
+
+    <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/ol-debug.js"></script>
+    <script type="text/javascript" src="js/syncGE_OL3/decodeGoogleEarthEnterprise.js"></script>
+    <script type="text/javascript" src="js/Cesium/Cesium.js"></script>
+    <!--Cesium.js已引入protobuf-->
+    <!--<script type="text/javascript" src="../protobuf.js"></script>-->
+    <script type="text/javascript" src="js/syncGE_OL3/google-earth-dbroot-parser.js"></script>
+    <script type="text/javascript" src="js/syncGE_OL3/GoogleEarthEnterpriseImagerySource.js"></script>
+    <script type="text/javascript">
+        //google earth imagery request url
+        //var url = 'http://localhost:8080/GeauthForward/Geauth';
+        var url = "you google earth request imagery tile url";
+        var googleEarthLayer = new ol.layer.Tile({
+            source: new ol.source.googleEarthImagery({
+                url: url,
+                projection: ol.proj.get('EPSG:4326')
+            })
+        });
+        var vectorLayer = new ol.layer.Vector({
+            title: '搜索结果',
+            source: new ol.source.Vector(),
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 255, 255, 0)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#0D72F1',
+                    width: 2
+                }),
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({
+                        color: '#ffcc33'
+                    })
+                })
+            })
+        });
+        var overView = new ol.control.OverviewMap({});
+        var zoomSlider = new ol.control.ZoomSlider();
+        var scaleLine = new ol.control.ScaleLine();
+        var mousePosition = new ol.control.MousePosition({
+            coordinateFormat: ol.coordinate.createStringXY(6),
+            projection: 'EPSG:4326',
+            className: 'custom-mouse-position',
+            target: document.getElementById('mouse-position'),
+            undefinedHTML: '&nbsp;'
+        });
+        var centerLonLat = [116.41667,39.91667];//116.403972,39.915125
+        var center3857 = ol.proj.transform(centerLonLat,'EPSG:4326', 'EPSG:3857' );
+        var map = new ol.Map({
+            target: 'map',//div id
+            layers: [googleEarthLayer, vectorLayer],//layer array
+            view: new ol.View({
+                projection: ol.proj.get('EPSG:4326'),
+                center: centerLonLat,
+                zoom: 10
+            }),
+            controls: ol.control.defaults().extend([scaleLine,zoomSlider,mousePosition])
+        });
+        $('#search_btn').click(function () {
+            //alert($('#lon_x').val() + ',' + $('#lat_y').val());
+            var LonLat = [$('#lon_x').val(), $('#lat_y').val()];
+            var LonLat3857 = ol.proj.transform(LonLat,'EPSG:4326', 'EPSG:3857');
+            map.getView().setCenter(LonLat);
+            var geom = new ol.geom.Point(LonLat);
+            var feature = new ol.Feature(geom);
+            vectorLayer.getSource().addFeature(feature);
+        });
+        var Width = $(window).width();
+        var Height = $(window).height();
+        var height = $("#head-box").height()+20;
+        $("#map").height(Height-height);
+        map.updateSize();
+    </script>
+</body>
+</html>

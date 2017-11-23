@@ -1,0 +1,40 @@
+.search{
+    width: 450px;
+    height: 40px;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    overflow: hidden;
+    /*margin-top: -200px;*/
+    /*margin-left: -400px;*/
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    padding: 5px;
+    box-sizing: border-box;
+    /*不会把盒子撑开*/
+}
+.search::before{
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: -1;
+    /*-1 可以当背景*/
+    -webkit-filter: blur(40px);
+    -moz-filter: blur(40px);
+    -ms-filter: blur(40px);
+    -o-filter: blur(40px);
+    filter: blur(40px);
+    margin: -15px;  /*消除边缘透明*/
+    background-image: url("../img/wite10x10.png");
+    background-repeat:repeat;
+    /*background: url(img/bg1.jpg) center top;  */
+   /* background-color: whitesmoke;
+    background-size: cover;*/
+    /*平铺*/
+    background-attachment: fixed;
+    /*位置固定*/
+}
