@@ -52,7 +52,7 @@
             _subtreePromises: {}
         };*/
         this.url = options.url;
-        var projection = options.projection !== undefined ? options.projection : 'EPSG:3857';
+        var projection = options.projection !== undefined ? options.projection : 'EPSG:4326';
         var that = this;
         this._providerReady = false;
         this.googleEarthProvider_ = new Cesium.GoogleEarthEnterpriseImageryProvider({
